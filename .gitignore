@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Google Colab
+.ipynb_checkpoints/
+
+.dev/

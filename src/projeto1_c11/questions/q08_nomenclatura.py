@@ -45,13 +45,18 @@ def renamed_families(result: pd.DataFrame) -> pd.DataFrame:
 
 
 def _timeline_rows(result: pd.DataFrame) -> pd.DataFrame:
-    preferred = result.loc[result["category_canon"].isin(NOMENCLATURE_FAMILIES)]
-    if not preferred.empty:
-        return preferred
-    renamed = renamed_families(result)
-    if not renamed.empty:
-        return renamed
-    return result
+    preferred = result.loc[result["category_canon"].isin(NOMENCLATURE_FAMILIES)].copy()
+    if preferred.empty:
+        renamed = renamed_families(result)
+        if not renamed.empty:
+            return renamed
+        return result
+
+    family_order = {name: index for index, name in enumerate(NOMENCLATURE_FAMILIES)}
+    preferred["_family_order"] = preferred["category_canon"].map(family_order)
+    return preferred.sort_values(["_family_order", "first_year"]).drop(
+        columns="_family_order"
+    )
 
 
 def plot(result: pd.DataFrame) -> Figure:
@@ -64,7 +69,7 @@ def plot(result: pd.DataFrame) -> Figure:
         fig.suptitle("Q8 · Modernização dos nomes das categorias", color=NAVY)
         return fig
 
-    rows = rows.sort_values(["category_canon", "first_year"]).reset_index(drop=True)
+    rows = rows.reset_index(drop=True)
     families = list(dict.fromkeys(rows["category_canon"].tolist()))
     color_map = {
         family: FAMILY_COLORS[index % len(FAMILY_COLORS)]

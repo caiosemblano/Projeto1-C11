@@ -85,20 +85,23 @@ def plot(result: pd.DataFrame, *, top_n: int = TOP_N) -> Figure:
         late_ax.barh(late["name"], late["losses_before_first_win"], color=GOLD)
         late_ax.set_xlabel("Indicações perdidas antes da 1ª vitória")
         late_ax.set_title(f"Top {len(late)} · persistência premiada")
+        max_loss = float(late["losses_before_first_win"].max())
+        late_ax.set_xlim(0, max(1.0, max_loss * 1.28))
         for y_pos, losses, wins in zip(
             range(len(late)),
             late["losses_before_first_win"],
             late["wins"],
             strict=True,
         ):
+            inside = losses > max_loss * 0.62
             late_ax.text(
-                losses + 0.15,
+                losses - 0.25 if inside else losses + 0.2,
                 y_pos,
-                f"{int(losses)} derrotas · {int(wins)} vitória(s)",
+                f"{int(losses)} · {int(wins)} vit.",
                 va="center",
-                ha="left",
+                ha="right" if inside else "left",
                 fontsize=8,
-                color=NAVY,
+                color="white" if inside else NAVY,
             )
 
     snubs = never_won(result, top_n=top_n)
@@ -108,17 +111,20 @@ def plot(result: pd.DataFrame, *, top_n: int = TOP_N) -> Figure:
         snub_ax.barh(snubs["name"], snubs["nominations"], color=WINE)
         snub_ax.set_xlabel("Indicações sem nenhuma estatueta")
         snub_ax.set_title(f"Top {len(snubs)} · injustiçados (0 vitórias)")
+        max_noms = float(snubs["nominations"].max())
+        snub_ax.set_xlim(0, max(1.0, max_noms * 1.22))
         for y_pos, nominations in zip(
             range(len(snubs)), snubs["nominations"], strict=True
         ):
+            inside = nominations > max_noms * 0.62
             snub_ax.text(
-                nominations + 0.15,
+                nominations - 0.25 if inside else nominations + 0.2,
                 y_pos,
                 str(int(nominations)),
                 va="center",
-                ha="left",
+                ha="right" if inside else "left",
                 fontsize=8,
-                color=SLATE,
+                color="white" if inside else SLATE,
             )
 
     fig.suptitle("Q6 · Persistência premiada e maiores esnobados", color=NAVY)

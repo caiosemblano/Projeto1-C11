@@ -16,7 +16,7 @@ QUESTION = (
 )
 
 MILESTONES = (
-    (1933, "Janelas 1927/28–1932/33"),
+    (1933, "Última janela 1927/28–1932/33"),
     (1935, "Alinhamento ao ano civil"),
     (COVID_CEREMONY_YEAR, "Janela COVID-19"),
 )
@@ -45,47 +45,54 @@ def calendar_anomalies(result: pd.DataFrame) -> pd.DataFrame:
     return result.loc[gaps.notna() & gaps.ne(1)].copy()
 
 
-def _annotate_milestone(ax, result: pd.DataFrame, year: int, text: str, y_col: str) -> None:
-    match = result.loc[result["year_ceremony"].eq(year)]
-    if match.empty:
-        return
-    row = match.iloc[0]
-    ax.annotate(
-        text,
-        (row["year_ceremony"], row[y_col]),
-        textcoords="offset points",
-        xytext=(8, 12),
-        fontsize=8,
-        color=NAVY,
-        arrowprops={"arrowstyle": "-", "color": SLATE, "lw": 0.6},
-    )
-
-
 def plot(result: pd.DataFrame) -> Figure:
     import matplotlib.pyplot as plt
 
     fig, axes = plt.subplots(2, 1, figsize=(11, 7.5), sharex=True, layout="constrained")
     lag_ax, volume_ax = axes
 
-    lag_ax.plot(
-        result["year_ceremony"],
-        result["lag_film_ceremony"],
-        marker="o",
-        color=GOLD,
-        label="year_ceremony − year_film",
+    lag_constant = (
+        float(result["lag_film_ceremony"].mode().iloc[0])
+        if not result.empty
+        else 1.0
     )
-    lag_ax.plot(
+    lag_ax.axhline(
+        lag_constant,
+        color=GOLD,
+        linestyle="--",
+        linewidth=1.8,
+        label=f"lag do CSV (sempre {lag_constant:.0f})",
+    )
+    lag_ax.step(
         result["year_ceremony"],
         result["ceremony_offset"],
-        marker="s",
+        where="post",
         color=NAVY,
+        linewidth=2.4,
         label="offset do calendário (ano − 1927 − edição)",
     )
     lag_ax.set_ylabel("Anos")
     lag_ax.set_title("Lag do CSV vs. mudança permanente de calendário")
+    lag_ax.set_ylim(-0.2, 1.45)
     lag_ax.legend(frameon=False, loc="center right")
-    for year, text in MILESTONES:
-        _annotate_milestone(lag_ax, result, year, text, "ceremony_offset")
+    if result["year_ceremony"].le(1933).any():
+        lag_ax.text(
+            0.02,
+            0.18,
+            "1928–1933: offset = 0\n(janelas 1927/28–1932/33)",
+            transform=lag_ax.transAxes,
+            fontsize=8,
+            color=NAVY,
+        )
+    if result["year_ceremony"].eq(1935).any():
+        lag_ax.text(
+            0.22,
+            0.55,
+            "1935–hoje: offset = lag = 1",
+            transform=lag_ax.transAxes,
+            fontsize=8,
+            color=NAVY,
+        )
 
     volume_ax.plot(
         result["year_ceremony"],
@@ -97,12 +104,26 @@ def plot(result: pd.DataFrame) -> Figure:
     volume_ax.set_xlabel("Ano da cerimônia")
     volume_ax.set_ylabel("Indicações")
     volume_ax.set_title("Volume de reconhecimento e marcos regulamentares")
+    label_offsets = {
+        1933: (6, -28),
+        1935: (8, 14),
+        COVID_CEREMONY_YEAR: (-110, 12),
+    }
     for year, text in MILESTONES:
         match = result.loc[result["year_ceremony"].eq(year)]
         if match.empty:
             continue
         volume_ax.axvline(year, color=SLATE, alpha=0.35, linestyle="--", linewidth=1)
-        _annotate_milestone(volume_ax, result, year, text, "n_nominations")
+        row = match.iloc[0]
+        volume_ax.annotate(
+            text,
+            (row["year_ceremony"], row["n_nominations"]),
+            textcoords="offset points",
+            xytext=label_offsets.get(year, (8, 12)),
+            fontsize=8,
+            color=NAVY,
+            arrowprops={"arrowstyle": "-", "color": SLATE, "lw": 0.6},
+        )
 
     fig.suptitle("Q9 · Janelas de elegibilidade e o calendário da Academia", color=NAVY)
     return fig

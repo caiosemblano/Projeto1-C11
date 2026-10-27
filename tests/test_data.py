@@ -1,8 +1,11 @@
 import pandas as pd
 
 from projeto1_c11.categories import (
+    ACTOR_LEADING_CANON,
+    ACTRESS_SUPPORTING_CANON,
     BEST_PICTURE_CANON,
     decade,
+    is_acting_category,
     is_country_award_category,
 )
 from projeto1_c11.data import clean
@@ -31,8 +34,20 @@ def test_country_award_categories_are_detected() -> None:
 
 
 def test_decade_uses_numpy_floor(oscars: pd.DataFrame) -> None:
-    assert set(oscars["decade"]) == {1950, 2010, 2020}
+    assert {1950, 2010, 2020}.issubset(set(oscars["decade"]))
     assert (decade(oscars["year_ceremony"]) == oscars["decade"].to_numpy()).all()
+
+
+def test_actor_alias_becomes_leading_role(oscars: pd.DataFrame) -> None:
+    actors = oscars.loc[oscars["category"].eq("ACTOR")]
+    assert actors["category_canon"].eq(ACTOR_LEADING_CANON).all()
+    assert is_acting_category(actors["category_canon"]).all()
+
+
+def test_supporting_acting_is_detected(oscars: pd.DataFrame) -> None:
+    supporting = oscars.loc[oscars["category"].eq("ACTRESS IN A SUPPORTING ROLE")]
+    assert supporting["category_canon"].eq(ACTRESS_SUPPORTING_CANON).all()
+    assert is_acting_category(supporting["category_canon"]).all()
 
 
 def test_honorary_flag_follows_original_category_not_just_canon() -> None:

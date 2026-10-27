@@ -47,6 +47,16 @@ def raw_oscars() -> pd.DataFrame:
             _row(2017, 2018, 90, "ACTOR", "Star", "Three", False),
             _row(2018, 2019, 91, "ACTOR", "Star", "Four", False),
             _row(2021, 2022, 94, "ACTOR", "Star", "Five", True),
+            _row(2009, 2010, 82, "DIRECTING", "Late", "Late1", False),
+            _row(2010, 2011, 83, "DIRECTING", "Late", "Late2", False),
+            _row(2011, 2012, 84, "DIRECTING", "Late", "Late3", True),
+            _row(2009, 2010, 82, "MUSIC (ORIGINAL SCORE)", "Snubbed", "Late1", False),
+            _row(2010, 2011, 83, "MUSIC (ORIGINAL SCORE)", "Snubbed", "Late2", False),
+            _row(2011, 2012, 84, "MUSIC (ORIGINAL SCORE)", "Snubbed", "Late3", False),
+            _row(1999, 2000, 72, "ACTRESS IN A SUPPORTING ROLE", "Support Star", "Side", False),
+            _row(2022, 2023, 95, "ACTOR IN A LEADING ROLE", "Newcomer", "Fresh", False),
+            _row(1932, 1933, 6, "DIRECTING", "Pioneer", "Early", False),
+            _row(1934, 1935, 7, "DIRECTING", "Pioneer", "EarlyTwo", False),
         ]
     )
 

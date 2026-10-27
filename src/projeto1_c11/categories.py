@@ -15,6 +15,30 @@ BEST_PICTURE_ALIASES = {
     "BEST PICTURE": BEST_PICTURE_CANON,
 }
 
+ACTOR_LEADING_CANON = "ACTOR IN A LEADING ROLE"
+ACTRESS_LEADING_CANON = "ACTRESS IN A LEADING ROLE"
+ACTOR_SUPPORTING_CANON = "ACTOR IN A SUPPORTING ROLE"
+ACTRESS_SUPPORTING_CANON = "ACTRESS IN A SUPPORTING ROLE"
+
+ACTING_LEADING_ALIASES = {
+    "ACTOR": ACTOR_LEADING_CANON,
+    "ACTRESS": ACTRESS_LEADING_CANON,
+}
+
+CATEGORY_ALIASES = {**BEST_PICTURE_ALIASES, **ACTING_LEADING_ALIASES}
+
+ACTING_CATEGORIES = (
+    ACTOR_LEADING_CANON,
+    ACTRESS_LEADING_CANON,
+    ACTOR_SUPPORTING_CANON,
+    ACTRESS_SUPPORTING_CANON,
+)
+
+LEADING_ACTING_CATEGORIES = frozenset({ACTOR_LEADING_CANON, ACTRESS_LEADING_CANON})
+SUPPORTING_ACTING_CATEGORIES = frozenset(
+    {ACTOR_SUPPORTING_CANON, ACTRESS_SUPPORTING_CANON}
+)
+
 HONORARY_MARKERS = (
     "HONORARY",
     "JEAN HERSHOLT",
@@ -45,8 +69,8 @@ def normalize_label(values: pd.Series) -> pd.Series:
 
 
 def canonicalize_category(category: pd.Series) -> pd.Series:
-    """Unifica os nomes históricos da categoria principal em BEST PICTURE."""
-    return normalize_label(category).replace(BEST_PICTURE_ALIASES)
+    """Unifica aliases históricos: Melhor Filme e atuação principal (ACTOR/ACTRESS)."""
+    return normalize_label(category).replace(CATEGORY_ALIASES)
 
 
 def is_best_picture_category(category_canon: pd.Series) -> pd.Series:
@@ -68,6 +92,19 @@ def is_honorary_category(category: pd.Series) -> pd.Series:
 def is_country_award_category(category_canon: pd.Series) -> pd.Series:
     """FOREIGN / INTERNATIONAL: o campo `name` costuma ser o país, não a pessoa."""
     return _contains_any(category_canon, COUNTRY_AWARD_MARKERS)
+
+
+def is_acting_category(category_canon: pd.Series) -> pd.Series:
+    """Quatro categorias competitivas de atuação (principal e coadjuvante)."""
+    return category_canon.isin(ACTING_CATEGORIES).fillna(False)
+
+
+def is_leading_acting_category(category_canon: pd.Series) -> pd.Series:
+    return category_canon.isin(LEADING_ACTING_CATEGORIES).fillna(False)
+
+
+def is_supporting_acting_category(category_canon: pd.Series) -> pd.Series:
+    return category_canon.isin(SUPPORTING_ACTING_CATEGORIES).fillna(False)
 
 
 def decade(year_ceremony: np.ndarray | pd.Series) -> np.ndarray:

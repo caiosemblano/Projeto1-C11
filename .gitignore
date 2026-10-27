@@ -223,3 +223,6 @@ __marimo__/
 .ipynb_checkpoints/
 
 .dev/
+
+# Dataset cache (downloaded from Kaggle)
+data/

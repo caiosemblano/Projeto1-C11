@@ -1,10 +1,10 @@
-"""Análise das 5 perguntas estratégicas sobre o Oscar."""
+"""Análise das 10 perguntas sobre o Oscar."""
 
 from __future__ import annotations
 
 
 def main() -> None:
-    """Carrega o dataset, responde Q1–Q5 e grava as figuras do pitch."""
+    """Carrega o dataset, responde Q1–Q10 e grava as figuras."""
     import matplotlib
 
     matplotlib.use("Agg")

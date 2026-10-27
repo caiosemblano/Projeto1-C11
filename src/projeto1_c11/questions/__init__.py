@@ -1,4 +1,4 @@
-"""Registro das perguntas estratégicas do pitch."""
+"""Registro das dez perguntas da análise."""
 
 from projeto1_c11.questions import (
     q01_conversao,
@@ -6,6 +6,11 @@ from projeto1_c11.questions import (
     q03_evolucao,
     q04_eficiencia,
     q05_concentracao,
+    q06_persistencia,
+    q07_atuacao,
+    q08_nomenclatura,
+    q09_elegibilidade,
+    q10_concorrentes,
 )
 
 QUESTIONS = (
@@ -14,6 +19,11 @@ QUESTIONS = (
     q03_evolucao,
     q04_eficiencia,
     q05_concentracao,
+    q06_persistencia,
+    q07_atuacao,
+    q08_nomenclatura,
+    q09_elegibilidade,
+    q10_concorrentes,
 )
 
 __all__ = [
@@ -23,4 +33,9 @@ __all__ = [
     "q03_evolucao",
     "q04_eficiencia",
     "q05_concentracao",
+    "q06_persistencia",
+    "q07_atuacao",
+    "q08_nomenclatura",
+    "q09_elegibilidade",
+    "q10_concorrentes",
 ]

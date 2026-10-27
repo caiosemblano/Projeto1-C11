@@ -1,7 +1,7 @@
 [project]
 name = "projeto1-c11"
 version = "0.1.0"
-description = "Análise das 5 perguntas estratégicas sobre o Oscar (C11)"
+description = "Análise das 10 perguntas sobre o Oscar (C11)"
 readme = "README.md"
 authors = [
     { name = "Caio Semblano", email = "semblanocaio@gmail.com" }
